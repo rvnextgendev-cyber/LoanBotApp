@@ -1,0 +1,48 @@
+#! mcp-deployment.yaml
+# Generated code, do not edit
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: mcp
+    namespace: loanbot
+    labels:
+        com.docker.compose.project: loanbot
+        com.docker.compose.service: mcp
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            com.docker.compose.project: loanbot
+            com.docker.compose.service: mcp
+    strategy:
+        type: Recreate
+    template:
+        metadata:
+            labels:
+                com.docker.compose.project: loanbot
+                com.docker.compose.service: mcp
+                com.docker.compose.network.default: "true"
+        spec:
+            containers:
+                - name: loanbot-mcp
+                  image: loanbot-mcp
+                  imagePullPolicy: IfNotPresent
+                  args:
+                    - python
+                    - mcp_server/server.py
+                  env:
+                    - name: LOANBOT_DATABASE_URL
+                      value: "postgresql+asyncpg://loanbot:loanbot@postgres:5432/loanbot"
+                    - name: LOANBOT_LLM_BASE_URL
+                      value: "http://host.docker.internal:11434/v1"
+                    - name: LOANBOT_LLM_MODEL
+                      value: "llama3"
+                    - name: MCP_HOST
+                      value: "0.0.0.0"
+                    - name: MCP_PORT
+                      value: "8765"
+                    - name: MCP_TRANSPORT
+                      value: "streamable-http"
+                  ports:
+                    - name: mcp-8765
+                      containerPort: 8765

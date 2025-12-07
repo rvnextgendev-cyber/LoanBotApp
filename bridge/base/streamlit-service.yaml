@@ -1,0 +1,19 @@
+#! streamlit-service.yaml
+# Generated code, do not edit
+apiVersion: v1
+kind: Service
+metadata:
+    name: streamlit-published
+    namespace: loanbot
+    labels:
+        com.docker.compose.project: loanbot
+        com.docker.compose.service: streamlit
+spec:
+    selector:
+        com.docker.compose.project: loanbot
+        com.docker.compose.service: streamlit
+    ports:
+        - name: streamlit-8501
+          port: 8501
+          protocol: TCP
+          targetPort: streamlit-8501

@@ -1,0 +1,20 @@
+#! kustomization.yaml
+# Generated code, do not edit
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+    - 0-loanbot-namespace.yaml
+    - api-deployment.yaml
+    - api-expose.yaml
+    - api-service.yaml
+    - default-network-policy.yaml
+    - mcp-deployment.yaml
+    - mcp-expose.yaml
+    - mcp-service.yaml
+    - postgres-deployment.yaml
+    - postgres-expose.yaml
+    - postgres-pgdata-persistentVolumeClaim.yaml
+    - postgres-service.yaml
+    - streamlit-deployment.yaml
+    - streamlit-expose.yaml
+    - streamlit-service.yaml

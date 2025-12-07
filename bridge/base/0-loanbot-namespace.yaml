@@ -1,0 +1,8 @@
+#! 0-loanbot-namespace.yaml
+# Generated code, do not edit
+apiVersion: v1
+kind: Namespace
+metadata:
+    name: loanbot
+    labels:
+        com.docker.compose.project: loanbot

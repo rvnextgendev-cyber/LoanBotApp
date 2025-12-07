@@ -1,0 +1,46 @@
+#! api-deployment.yaml
+# Generated code, do not edit
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: api
+    namespace: loanbot
+    labels:
+        com.docker.compose.project: loanbot
+        com.docker.compose.service: api
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            com.docker.compose.project: loanbot
+            com.docker.compose.service: api
+    strategy:
+        type: Recreate
+    template:
+        metadata:
+            labels:
+                com.docker.compose.project: loanbot
+                com.docker.compose.service: api
+                com.docker.compose.network.default: "true"
+        spec:
+            containers:
+                - name: loanbot-api
+                  image: loanbot-api
+                  imagePullPolicy: IfNotPresent
+                  args:
+                    - uvicorn
+                    - app.main:app
+                    - --host
+                    - 0.0.0.0
+                    - --port
+                    - 8000
+                  env:
+                    - name: LOANBOT_DATABASE_URL
+                      value: "postgresql+asyncpg://loanbot:loanbot@postgres:5432/loanbot"
+                    - name: LOANBOT_LLM_BASE_URL
+                      value: "http://host.docker.internal:11434/v1"
+                    - name: LOANBOT_LLM_MODEL
+                      value: "llama3"
+                  ports:
+                    - name: api-8000
+                      containerPort: 8000

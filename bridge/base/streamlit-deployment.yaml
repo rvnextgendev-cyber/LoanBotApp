@@ -1,0 +1,41 @@
+#! streamlit-deployment.yaml
+# Generated code, do not edit
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: streamlit
+    namespace: loanbot
+    labels:
+        com.docker.compose.project: loanbot
+        com.docker.compose.service: streamlit
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            com.docker.compose.project: loanbot
+            com.docker.compose.service: streamlit
+    strategy:
+        type: Recreate
+    template:
+        metadata:
+            labels:
+                com.docker.compose.project: loanbot
+                com.docker.compose.service: streamlit
+                com.docker.compose.network.default: "true"
+        spec:
+            containers:
+                - name: loanbot-streamlit
+                  image: loanbot-streamlit
+                  imagePullPolicy: IfNotPresent
+                  args:
+                    - streamlit
+                    - run
+                    - streamlit_app/loan_ui.py
+                    - --server.port=8501
+                    - --server.address=0.0.0.0
+                  env:
+                    - name: LOANBOT_API_URL
+                      value: "http://api:8000"
+                  ports:
+                    - name: streamlit-8501
+                      containerPort: 8501

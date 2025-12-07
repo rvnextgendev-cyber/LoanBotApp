@@ -1,0 +1,59 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: loanbot-postgres
+    environment:
+      POSTGRES_USER: loanbot
+      POSTGRES_PASSWORD: loanbot
+      POSTGRES_DB: loanbot
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U loanbot"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build: .
+    container_name: loanbot-api
+    environment:
+      LOANBOT_DATABASE_URL: postgresql+asyncpg://loanbot:loanbot@postgres:5432/loanbot
+      LOANBOT_LLM_BASE_URL: ${LOANBOT_LLM_BASE_URL:-http://host.docker.internal:11434/v1}
+      LOANBOT_LLM_MODEL: ${LOANBOT_LLM_MODEL:-llama3}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "8000:8000"
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000
+
+  streamlit:
+    build: .
+    container_name: loanbot-streamlit
+    environment:
+      LOANBOT_API_URL: http://api:8000
+    depends_on:
+      - api
+    ports:
+      - "8501:8501"
+    command: streamlit run streamlit_app/loan_ui.py --server.port=8501 --server.address=0.0.0.0
+
+  mcp:
+    build: .
+    container_name: loanbot-mcp
+    environment:
+      LOANBOT_DATABASE_URL: postgresql+asyncpg://loanbot:loanbot@postgres:5432/loanbot
+      LOANBOT_LLM_BASE_URL: ${LOANBOT_LLM_BASE_URL:-http://host.docker.internal:11434/v1}
+      LOANBOT_LLM_MODEL: ${LOANBOT_LLM_MODEL:-llama3}
+      MCP_TRANSPORT: streamable-http
+      MCP_HOST: 0.0.0.0
+      MCP_PORT: 8765
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "8765:8765"
+    command: python mcp_server/server.py

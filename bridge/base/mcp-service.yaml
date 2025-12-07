@@ -1,0 +1,21 @@
+#! mcp-service.yaml
+# Generated code, do not edit
+apiVersion: v1
+kind: Service
+metadata:
+    name: mcp-published
+    namespace: loanbot
+    labels:
+        com.docker.compose.project: loanbot
+        com.docker.compose.service: mcp
+spec:
+    selector:
+        com.docker.compose.project: loanbot
+        com.docker.compose.service: mcp
+    ports:
+        - name: mcp-8765
+          port: 8765
+          protocol: TCP
+          targetPort: mcp-8765
+
+# check if there is at least one published port
