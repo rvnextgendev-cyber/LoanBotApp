@@ -3,9 +3,9 @@ services:
     image: postgres:16
     container_name: loanbot-postgres
     environment:
-      POSTGRES_USER: loanbot
-      POSTGRES_PASSWORD: loanbot
-      POSTGRES_DB: loanbot
+      POSTGRES_USER: ${POSTGRES_USER:-loanbot}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeme}
+      POSTGRES_DB: ${POSTGRES_DB:-loanbot}
     ports:
       - "5432:5432"
     volumes:
@@ -20,7 +20,7 @@ services:
     build: .
     container_name: loanbot-api
     environment:
-      LOANBOT_DATABASE_URL: postgresql+asyncpg://loanbot:loanbot@postgres:5432/loanbot
+      LOANBOT_DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-loanbot}:${POSTGRES_PASSWORD:-changeme}@postgres:5432/${POSTGRES_DB:-loanbot}
       LOANBOT_LLM_BASE_URL: ${LOANBOT_LLM_BASE_URL:-http://host.docker.internal:11434/v1}
       LOANBOT_LLM_MODEL: ${LOANBOT_LLM_MODEL:-llama3}
     depends_on:
@@ -45,7 +45,7 @@ services:
     build: .
     container_name: loanbot-mcp
     environment:
-      LOANBOT_DATABASE_URL: postgresql+asyncpg://loanbot:loanbot@postgres:5432/loanbot
+      LOANBOT_DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-loanbot}:${POSTGRES_PASSWORD:-changeme}@postgres:5432/${POSTGRES_DB:-loanbot}
       LOANBOT_LLM_BASE_URL: ${LOANBOT_LLM_BASE_URL:-http://host.docker.internal:11434/v1}
       LOANBOT_LLM_MODEL: ${LOANBOT_LLM_MODEL:-llama3}
       MCP_TRANSPORT: streamable-http

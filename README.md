@@ -16,7 +16,7 @@ If Docker Hub login blocks pulls, swap base image in `Dockerfile` to `public.ecr
 - Run UI: `streamlit run streamlit_app/loan_ui.py`
 - Run MCP server: `python mcp_server/server.py` (defaults to streamable-http on `0.0.0.0:8765`)
 
-Environment: copy `.env.example` to `.env` and set `LOANBOT_DATABASE_URL`, `LOANBOT_LLM_BASE_URL`, `LOANBOT_LLM_MODEL`, and optionally `LOANBOT_API_URL` for the UI.
+Environment: copy `.env.example` to `.env` and set `POSTGRES_PASSWORD` (and the derived `LOANBOT_DATABASE_URL`), `LOANBOT_LLM_BASE_URL`, `LOANBOT_LLM_MODEL`, and optionally `LOANBOT_API_URL` for the UI. The defaults in `.env.example` are placeholders; change them before deploying publicly.
 
 ## Agent loop (`/chat/llm-next`)
 The endpoint keeps session state in `loan_sessions`, asks LLaMA for the next question as JSON, and writes completed loans to `loans`. The orchestrator falls back to a rule-based JSON response when no LLM is available.
@@ -109,3 +109,4 @@ docker compose exec postgres psql -U loanbot -d loanbot -c "TRUNCATE TABLE loans
 - Swap the startup `create_all` with Alembic migrations.
 - Point `LOANBOT_LLM_BASE_URL` to your local LLaMA (Ollama/llama.cpp OpenAI-compatible) endpoint.
 - Repository pattern is in `app/repository.py`; services are shared across FastAPI, Streamlit, and MCP.
+- Kubernetes manifests under `bridge/` use placeholder database credentials; supply a real `POSTGRES_PASSWORD` via a Secret before deploying.
