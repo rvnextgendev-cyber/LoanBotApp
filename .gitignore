@@ -34,8 +34,11 @@ pip-wheel-metadata/
 .coverage.*
 htmlcov/
 
-# Local data (e.g., Postgres volume)
+# Postgres data volumes
 data/postgres/
+postgres-data/
+pgdata/
+.psql_history
 
 # Logs and runtime files
 *.log
