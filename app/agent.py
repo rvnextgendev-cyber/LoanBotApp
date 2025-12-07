@@ -82,30 +82,52 @@ class AgentOrchestrator:
                     collected[next_field] = float(cleaned)
                 except ValueError:
                     pass
+            elif next_field == "applicant_email":
+                import re
+
+                match = re.search(r"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}", user_reply)
+                collected[next_field] = match.group(0) if match else user_reply
             else:
                 collected[next_field] = user_reply
             missing = [f for f in self.required_fields if f not in collected]
 
         if not missing:
-            loan_payload = LoanCreate(
-                applicant_name=collected["applicant_name"],
-                applicant_email=collected["applicant_email"],
-                amount=float(collected["amount"]),
-                purpose=collected["purpose"],
-                extra={"source": "agent-loop"},
-            )
-            loan = await self.loan_service.create_loan(db, loan_payload)
-            state = await self.conversation_service.attach_loan(
-                db, state, loan.id
-            )
-            return ChatResponse(
-                session_id=state.session_id,
-                next_question=None,
-                pending_fields=[],
-                collected=state.collected,
-                completed=True,
-                loan=loan,
-            )
+            try:
+                loan_payload = LoanCreate(
+                    applicant_name=collected["applicant_name"],
+                    applicant_email=collected["applicant_email"],
+                    amount=float(collected["amount"]),
+                    purpose=collected["purpose"],
+                    extra={"source": "agent-loop"},
+                )
+            except (ValidationError, ValueError) as exc:
+                invalid_fields = set()
+                if isinstance(exc, ValidationError):
+                    for err in exc.errors():
+                        loc = err.get("loc", [])
+                        if loc:
+                            field = loc[0]
+                            if field in self.required_fields:
+                                invalid_fields.add(field)
+                else:
+                    invalid_fields.add("amount")
+
+                for field in invalid_fields:
+                    collected.pop(field, None)
+                missing = [f for f in self.required_fields if f not in collected]
+            else:
+                loan = await self.loan_service.create_loan(db, loan_payload)
+                state = await self.conversation_service.attach_loan(
+                    db, state, loan.id
+                )
+                return ChatResponse(
+                    session_id=state.session_id,
+                    next_question=None,
+                    pending_fields=[],
+                    collected=state.collected,
+                    completed=True,
+                    loan=loan,
+                )
 
         # Ask follow-up based on current missing fields (ignore stale LLM question)
         question = self._fallback_question(missing)
@@ -128,7 +150,7 @@ class AgentOrchestrator:
         if not missing:
             return "I have all I need. Ready to submit?"
         question_map = {
-            "applicant_name": "What is the applicant name?",
+            "applicant_name": "What is the applicant's full name?",
             "applicant_email": "What's the best email for you?",
             "amount": "How much are you looking to borrow?",
             "purpose": "What will you use the funds for?",

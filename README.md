@@ -107,6 +107,25 @@ cd C:\Users\RajeshDas\source\repos\LoanBot
 docker compose exec postgres psql -U loanbot -d loanbot -c "TRUNCATE TABLE loans, loan_sessions RESTART IDENTITY CASCADE;"
 ```
 
+### Using a real LLM (no fallback)
+- Start your model server locally (e.g., `ollama serve` exposing `http://localhost:11434/v1`).
+- From PowerShell, run compose with your endpoint/model:
+  ```powershell
+  $env:LOANBOT_LLM_BASE_URL="http://host.docker.internal:11434/v1"
+  $env:LOANBOT_LLM_MODEL="llama3"
+  docker compose up --build
+  ```
+- Remove any test override like `LOANBOT_LLM_BASE_URL=http://localhost:0` when you want real calls.
+- Run `process_email` against the real LLM (adjust model/endpoint as needed):
+  ```powershell
+  $env:LOANBOT_LLM_BASE_URL="http://host.docker.internal:11434/v1"
+  $env:LOANBOT_LLM_MODEL="llama3"
+  docker compose up --build  # if not already running
+
+  docker compose exec mcp python -c "import asyncio, json; from mcp_server.server import process_email; email = '''Subject: Loan request
+Hi, I need $25,000 for working capital. I'm Alex Doe, rajesh.das@gmail.com.'''; print(json.dumps(asyncio.run(process_email(email)), indent=2))"
+  ```
+
 ## Production notes
 - Swap the startup `create_all` with Alembic migrations.
 - Point `LOANBOT_LLM_BASE_URL` to your local LLaMA (Ollama/llama.cpp OpenAI-compatible) endpoint.

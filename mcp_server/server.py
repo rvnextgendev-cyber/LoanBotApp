@@ -44,11 +44,12 @@ async def process_email(email_text: str) -> dict:
         await _ensure_tables()
         # Seed the conversation with the email text as first user message.
         response = await agent.handle_turn(db, session_id=None, user_reply=email_text)
-        # If missing fields remain, keep asking with empty string placeholder to demonstrate loop.
-        while not response.completed and response.pending_fields:
-            follow_up = f"Use details from email, fill {response.pending_fields[0]}"
+        # Loop a few times, reusing the email text so heuristic extraction can fill fields.
+        for _ in range(6):
+            if response.completed or not response.pending_fields:
+                break
             response = await agent.handle_turn(
-                db, response.session_id, user_reply=follow_up
+                db, response.session_id, user_reply=email_text
             )
         return {
             "session_id": response.session_id,

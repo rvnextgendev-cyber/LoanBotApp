@@ -62,7 +62,7 @@ class LLMClient:
         missing = [f for f in required if f not in collected]
         if missing:
             question_map = {
-                "applicant_name": "What is the applicant name?",
+                "applicant_name": "What is the applicant's full name?",
                 "applicant_email": "What's the best email to reach you?",
                 "amount": "How much are you looking to borrow?",
                 "purpose": "What will you use the loan for?",
