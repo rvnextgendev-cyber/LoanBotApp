@@ -7,6 +7,6 @@ resources:
 patches:
     - path: api-service.yaml
     - path: mcp-service.yaml
-    - path: postgres-pgdata-persistentVolumeClaim.yaml
+    - path: postgres-C:\Users\RajeshDas\source\repos\LoanBot\data\postgres-persistentVolumeClaim.yaml
     - path: postgres-service.yaml
     - path: streamlit-service.yaml

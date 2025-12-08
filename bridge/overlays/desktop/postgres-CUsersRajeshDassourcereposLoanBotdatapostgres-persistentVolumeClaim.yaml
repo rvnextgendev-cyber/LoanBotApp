@@ -1,9 +1,9 @@
-#! postgres-pgdata-persistentVolumeClaim.yaml
+#! postgres-C:\Users\RajeshDas\source\repos\LoanBot\data\postgres-persistentVolumeClaim.yaml
 # Generated code, do not edit
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-    name: postgres-pgdata
+    name: postgres-c--users-rajeshdas-source-repos-loanbot-data-postgres
     namespace: loanbot
 spec:
     storageClassName: "hostpath" # see docker/desktop-storage-provisioner

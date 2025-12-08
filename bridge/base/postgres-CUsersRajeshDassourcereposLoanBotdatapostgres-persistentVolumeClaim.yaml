@@ -1,13 +1,13 @@
-#! postgres-pgdata-persistentVolumeClaim.yaml
+#! postgres-C:\Users\RajeshDas\source\repos\LoanBot\data\postgres-persistentVolumeClaim.yaml
 # Generated code, do not edit
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-    name: postgres-pgdata
+    name: postgres-c--users-rajeshdas-source-repos-loanbot-data-postgres
     namespace: loanbot
     labels:
         com.docker.compose.service: postgres
-        com.docker.compose.volume: pgdata
+        com.docker.compose.volume: C:\Users\RajeshDas\source\repos\LoanBot\data\postgres
 spec:
     accessModes:
         # TODO would need to check which services use this volume

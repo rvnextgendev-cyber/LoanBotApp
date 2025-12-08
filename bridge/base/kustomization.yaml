@@ -11,9 +11,9 @@ resources:
     - mcp-deployment.yaml
     - mcp-expose.yaml
     - mcp-service.yaml
+    - postgres-C:\Users\RajeshDas\source\repos\LoanBot\data\postgres-persistentVolumeClaim.yaml
     - postgres-deployment.yaml
     - postgres-expose.yaml
-    - postgres-pgdata-persistentVolumeClaim.yaml
     - postgres-service.yaml
     - streamlit-deployment.yaml
     - streamlit-expose.yaml

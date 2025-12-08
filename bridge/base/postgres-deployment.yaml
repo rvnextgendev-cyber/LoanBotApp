@@ -31,7 +31,7 @@ spec:
                     - name: POSTGRES_DB
                       value: "loanbot"
                     - name: POSTGRES_PASSWORD
-                      value: "loanbot"  # placeholder; override with a Secret
+                      value: "loanbot"
                     - name: POSTGRES_USER
                       value: "loanbot"
                   livenessProbe:
@@ -51,5 +51,5 @@ spec:
                       mountPath: /var/lib/postgresql/data
             volumes:
                 - name: var-lib-postgresql-data
-                  persistentVolumeClaim:
-                    claimName: postgres-pgdata
+                  hostPath:
+                    path: C:\Users\RajeshDas\source\repos\LoanBot\data\postgres

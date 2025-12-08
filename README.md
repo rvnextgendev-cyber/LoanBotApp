@@ -92,6 +92,8 @@ flowchart LR
 cd C:\Users\RajeshDas\source\repos\LoanBot
 docker compose up --build
 docker compose down
+
+cd C:\Users\RajeshDas\source\repos\LoanBot
 docker compose exec postgres psql -U loanbot -d loanbot -c "SELECT id, applicant_name, applicant_email, amount, purpose, status, extra, created_at FROM loans ORDER BY id DESC LIMIT 10;"
 
 cd C:\Users\RajeshDas\source\repos\LoanBot
